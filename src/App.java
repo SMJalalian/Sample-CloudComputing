@@ -30,7 +30,7 @@ public class App {
 			DatacenterBroker broker = myTools.createBroker("MyBroker");
 			int brokerId = broker.getId();
 			//*************
-			Datacenter myDatacentered = myTools.createDatacenter("MyDC",5);
+			Datacenter myDatacentered = myTools.createDatacenter("MyDC", 5, 5000, 4096, 1000000, 10000 );
 			//*************
 			UtilizationModel utilizationModel = new UtilizationModelFull();
 			vmlist = new ArrayList<Vm>();
@@ -53,7 +53,7 @@ public class App {
 			Log.printLine(myDatacentered.getName());
 			printCloudletList(newList);
 		}
-		
+
         catch (Exception e) {
 			e.printStackTrace();
 			Log.printLine("Unwanted errors happen");

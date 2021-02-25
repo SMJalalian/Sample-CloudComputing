@@ -1,36 +1,39 @@
-import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
-import org.cloudbus.cloudsim.DatacenterBroker;
-import org.cloudbus.cloudsim.Vm;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.ArrayList;
+
 import org.cloudbus.cloudsim.Storage;
+
+import org.cloudbus.cloudsim.provisioners.*;
+
+import org.cloudbus.cloudsim.Vm;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Host;
-import org.cloudbus.cloudsim.VmAllocationPolicySimple;
-import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
-import org.cloudbus.cloudsim.DatacenterCharacteristics;
-import org.cloudbus.cloudsim.VmSchedulerTimeShared;
-import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
-import org.cloudbus.cloudsim.provisioners.*;
 import org.cloudbus.cloudsim.Datacenter;
+import org.cloudbus.cloudsim.DatacenterBroker;
+import org.cloudbus.cloudsim.VmSchedulerTimeShared;
+import org.cloudbus.cloudsim.VmAllocationPolicySimple;
+import org.cloudbus.cloudsim.DatacenterCharacteristics;
+import org.cloudbus.cloudsim.CloudletSchedulerTimeShared;
 
 
 public class Tools {
 
+	//Constructor
     public Tools() {
         super();
     }
 
 
     public Vm createVM(int vmid, int mips, long size, int ram, long bw, int pesNumber, String vmm, int brokerId) {
-        // create VM
+
         Vm virtualMachine = null;
         virtualMachine = new Vm(vmid, brokerId, mips, pesNumber, ram, bw, size, vmm, new CloudletSchedulerTimeShared()); 
         return virtualMachine;
     }
 
     public DatacenterBroker createBroker(String name) {
+
 		DatacenterBroker broker = null;
 		try {
 			broker = new DatacenterBroker(name);
@@ -41,20 +44,15 @@ public class Tools {
 		return broker;
 	}
  
-    public Datacenter createDatacenter(String name,  int hostNumbers) {
+    public Datacenter createDatacenter(String name,  int hostNumbers, int mips , int ram, long storage, int bw) {
 
 		List<Host> hostList = new ArrayList<Host>();
 		List<Pe> peList = new ArrayList<Pe>();
 
-		int mips = 5000;
-
 		peList.add(new Pe(0, new PeProvisionerSimple(mips)));
-
 		for (int i = 0; i < hostNumbers; i++) {
 			int hostId = i;
-			int ram = 4094; // host memory (MB)
-			long storage = 1000000; // host storage
-			int bw = 10000;
+
 			hostList.add(
 				new Host(
 					hostId,
