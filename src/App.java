@@ -13,9 +13,6 @@ import org.cloudbus.cloudsim.UtilizationModelFull;
 
 
 public class App {
-
-
-
     public static void main(String[] args) throws Exception 
     {      
         try{
@@ -23,51 +20,40 @@ public class App {
             List<Vm> vmlist;
             List<Cloudlet> cloudletList;
             Tools myTools = new Tools();
-
+			//*************
 			int numUser = 1;
 			Calendar calendar = Calendar.getInstance();
 			boolean traceFlag = false;
-
+			//*************
 			CloudSim.init(numUser, calendar, traceFlag);
-
-			Datacenter myDatacentered = myTools.createDatacenter("MyDC");
-
-            Log.printLine(myDatacentered.getName());
-
-
+			//*************
 			DatacenterBroker broker = myTools.createBroker("MyBroker");
 			int brokerId = broker.getId();
-			
-            Vm vm1 = myTools.createVM(0, 1000, 10000, 512, 1000, 1, "Xen", brokerId);
-			Vm vm2 = myTools.createVM(1, 1000, 10000, 512, 1000, 1, "Xen", brokerId);
-
-            
-            vmlist = new ArrayList<Vm>();
-			vmlist.add(vm1);
-			vmlist.add(vm2);
-
-			broker.submitVmList(vmlist);
-
-			cloudletList = new ArrayList<Cloudlet>();
-
+			//*************
+			Datacenter myDatacentered = myTools.createDatacenter("MyDC",5);
+			//*************
 			UtilizationModel utilizationModel = new UtilizationModelFull();
-			Cloudlet cloudlet1 = new Cloudlet(0, 40000, 1, 300, 300, utilizationModel, utilizationModel, utilizationModel);
-			Cloudlet cloudlet2 = new Cloudlet(1, 400000, 1, 300, 300, utilizationModel, utilizationModel, utilizationModel);
-
-            cloudlet1.setUserId(brokerId);
-			cloudlet1.setVmId(0);
-			cloudlet2.setUserId(brokerId);
-			cloudlet2.setVmId(1);
-
-			cloudletList.add(cloudlet1);
-			cloudletList.add(cloudlet2);
+			vmlist = new ArrayList<Vm>();
+			cloudletList = new ArrayList<Cloudlet>();
+			for (int i = 0; i < 5; i++) {
+				Vm vm = myTools.createVM(i, 1000, 10000, 512, 1000, 1, "Xen", brokerId);
+				Cloudlet cloudlet = new Cloudlet(i, 40000, 1, 300, 300, utilizationModel, utilizationModel, utilizationModel);
+				vmlist.add(vm);
+				cloudlet.setUserId(brokerId);
+				cloudlet.setVmId(i);
+				cloudletList.add(cloudlet);
+			}
+			broker.submitVmList(vmlist);
 			broker.submitCloudletList(cloudletList);
-
+			//*************
 			CloudSim.startSimulation();
 			CloudSim.stopSimulation();
+			//*************
 			List<Cloudlet> newList = broker.getCloudletReceivedList();
+			Log.printLine(myDatacentered.getName());
 			printCloudletList(newList);
-		} 
+		}
+		
         catch (Exception e) {
 			e.printStackTrace();
 			Log.printLine("Unwanted errors happen");

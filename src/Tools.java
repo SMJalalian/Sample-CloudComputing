@@ -41,69 +41,56 @@ public class Tools {
 		return broker;
 	}
  
-    public Datacenter createDatacenter(String name) {
+    public Datacenter createDatacenter(String name,  int hostNumbers) {
 
-		// Here are the steps needed to create a PowerDatacenter:
-		// 1. We need to create a list to store
-		// our machine
 		List<Host> hostList = new ArrayList<Host>();
-
-		// 2. A Machine contains one or more PEs or CPUs/Cores.
-		// In this example, it will have only one core.
 		List<Pe> peList = new ArrayList<Pe>();
 
-		int mips = 2000;
+		int mips = 5000;
 
-		// 3. Create PEs and add these into a list.
-		peList.add(new Pe(0, new PeProvisionerSimple(mips))); // need to store Pe id and MIPS Rating
+		peList.add(new Pe(0, new PeProvisionerSimple(mips)));
 
-		// 4. Create Host with its id and list of PEs and add them to the list
-		// of machines
-		int hostId = 0;
-		int ram = 4094; // host memory (MB)
-		long storage = 1000000; // host storage
-		int bw = 10000;
+		for (int i = 0; i < hostNumbers; i++) {
+			int hostId = i;
+			int ram = 4094; // host memory (MB)
+			long storage = 1000000; // host storage
+			int bw = 10000;
+			hostList.add(
+				new Host(
+					hostId,
+					new RamProvisionerSimple(ram),
+					new BwProvisionerSimple(bw),
+					storage,
+					peList,
+					new VmSchedulerTimeShared(peList)
+				)
+			);
+		}
 
-		hostList.add(
-			new Host(
-				hostId,
-				new RamProvisionerSimple(ram),
-				new BwProvisionerSimple(bw),
-				storage,
-				peList,
-				new VmSchedulerTimeShared(peList)
-			)
-		); // This is our machine
-
-		// 5. Create a DatacenterCharacteristics object that stores the
-		// properties of a data center: architecture, OS, list of
-		// Machines, allocation policy: time- or space-shared, time zone
-		// and its price (G$/Pe time unit).
-		String arch = "x86"; // system architecture
-		String os = "Linux"; // operating system
+		String arch = "x86"; 
+		String os = "Linux";
 		String vmm = "Xen";
-		double time_zone = 10.0; // time zone this resource located
-		double cost = 3.0; // the cost of using processing in this resource
-		double costPerMem = 0.05; // the cost of using memory in this resource
-		double costPerStorage = 0.001; // the cost of using storage in this
-										// resource
-		double costPerBw = 0.0; // the cost of using bw in this resource
-		LinkedList<Storage> storageList = new LinkedList<Storage>(); // we are not adding SAN
-													// devices by now
+		double timeZone = 10.0; 
+		double cost = 3.0; 
+		double costPerMem = 0.05; 
+		double costPerStorage = 0.001; 
+		double costPerBw = 0.0; 
+		LinkedList<Storage> storageList = new LinkedList<Storage>();
 
 		DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
-				arch, os, vmm, hostList, time_zone, cost, costPerMem,
+				arch, os, vmm, hostList, timeZone, cost, costPerMem,
 				costPerStorage, costPerBw);
 
-		// 6. Finally, we need to create a PowerDatacenter object.
 		Datacenter datacenter = null;
-		try {
+		try 
+		{
 			datacenter = new Datacenter(name, characteristics, new VmAllocationPolicySimple(hostList), storageList, 0);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 
 		return datacenter;
 	}
-    
 }
